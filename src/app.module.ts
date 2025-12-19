@@ -7,22 +7,29 @@ import { MateriasModule } from './materias/materias.module';
 import { MateriaEstdiantesModule } from './materia-estdiantes/materia-estdiantes.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { rejects } from 'assert';
 @Module({
   imports: [
-
-
-
     ConfigModule.forRoot({ isGlobal: true }),
 
     TypeOrmModule.forRoot({
-      type: "mysql",
-      host: "localhost",
-      port: 3307,
-      username: "user_crud",
-      password: "root",
-      database: "db_crud",
+      type: 'postgres',
+      host: process.env.POSTGRES_HOST,
+      port: parseInt(process.env.POSTGRES_PORT!),
+      username: process.env.POSTGRES_USERNAME,
+      password: process.env.POSTGRES_PASSWORD,
+      database: process.env.POSTGRES_DATABASE,
       autoLoadEntities: true,
-      synchronize: true
+      synchronize: true,
+      ssl: process.env.POSTGRES_SSL === 'true',
+      extra: {
+        ssl:
+          process.env.POSTGRES_SSL === 'true'
+            ? {
+                rejectUnauthorised: false,
+              }
+            : null,
+      },
     }),
 
     ColegiosModule,
@@ -36,9 +43,8 @@ import { AuthModule } from './auth/auth.module';
     UsersModule,
 
     AuthModule,
-
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {}
